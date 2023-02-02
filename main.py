@@ -1,4 +1,3 @@
-import serial.tools.list_ports
 import random
 import time
 import  sys
@@ -39,10 +38,10 @@ process_this_frame = True
 #MQTT
 AIO_FEED_ID = "newusers"
 AIO_USERNAME = "izayazuna"
-AIO_KEY = "aio_nhia51HKo34RCmyuHMaw1B3Vhs6C"
+AIO_KEY = "aio_uAOd82VeiPSMHEqUZnjkfOjKez5E"
 def  connected(client):
     print("Ket noi thanh cong...")
-    client.subscribe(AIO_FEED_ID)
+    client.subscribe(AIO_FEED_ID) 
 
 def  subscribe(client , userdata , mid , granted_qos):
     print("Subscribe thanh cong...")
@@ -68,7 +67,12 @@ client.loop_background()
 #End Mqtt
 
 
+
+
 if __name__=="__main__":
+
+    prev_name = ""
+    size_of_room = 0
     while True:
         # Grab a single frame of video
         ret, frame = video_capture.read()
@@ -80,7 +84,7 @@ if __name__=="__main__":
         # Only process every other frame of video to save time
         if process_this_frame:
             # Find all the faces and face encodings in the current frame of video
-            face_locations = face_recognition.face_locations(rgb_small_frame)
+            face_locations = face_recognition.face_locations(rgb_small_frame, model="cnn")
             face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
             face_names = []
@@ -101,6 +105,14 @@ if __name__=="__main__":
                     name = known_face_names[best_match_index]
 
                 face_names.append(name)
+
+                for n in face_names:
+                    if name != "Unknown" and name != prev_name:
+                        prev_name = name
+                        
+                        print("Using post method to update the event")
+            
+           
 
         process_this_frame = not process_this_frame
 
